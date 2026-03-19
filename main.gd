@@ -11,7 +11,7 @@ var mode: int = 0
 	# 3 = shape
 var line_thickness: float = 1
 func _process(delta: float) -> void:
-	get_tree().root.content_scale_factor = DisplayServer.window_get_size().x / 1920.0 * 2
+	get_tree().root.content_scale_factor = DisplayServer.window_get_size().x / 1920.0 * 1.5
 	line_thickness = line_thickness_slider.value
 func drawbuttonpressed() -> void:
 	mode = 0

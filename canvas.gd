@@ -2,7 +2,7 @@ extends Control
 @onready var main: Node = get_tree().current_scene
 var current_stroke: Node
 var stroke_list: Array = []
-
+var stroke_position: Vector2 = Vector2.ZERO
 func _gui_input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
@@ -18,7 +18,7 @@ func _gui_input(event):
 					current_stroke = Line2D.new()
 					current_stroke.end_cap_mode = Line2D.LINE_CAP_ROUND
 					current_stroke.begin_cap_mode = Line2D.LINE_CAP_ROUND
-					current_stroke.joint_mode = Line2D.LINE_JOINT_BEVEL
+					current_stroke.joint_mode = Line2D.LINE_JOINT_ROUND
 					current_stroke.default_color = main.colorbutton.color
 					current_stroke.width = main.line_thickness
 					current_stroke.add_point(main.art.global_transform.affine_inverse() * event.position)
@@ -44,9 +44,12 @@ func _gui_input(event):
 						stroke_list.erase(stroke)
 						break
 			elif current_stroke is Line2D:
-				current_stroke.add_point(main.art.global_transform.affine_inverse() * event.position)
+				stroke_position = lerp(stroke_position, event.position, .5)
+				current_stroke.add_point(main.art.global_transform.affine_inverse() * stroke_position)
 			elif current_stroke:
 				current_stroke.polygon = current_stroke.polygon + PackedVector2Array([main.art.global_transform.affine_inverse() * event.position])
+		else:
+			stroke_position = event.position
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
 			main.art.global_position += event.relative
 
