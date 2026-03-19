@@ -1,6 +1,21 @@
 [gd_scene format=3 uid="uid://cekymtfjn0y1j"]
 
-[node name="Main" type="Node" unique_id=1428096425]
+[ext_resource type="Script" uid="uid://dikca8pffwpjq" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://dy14uxo20uork" path="res://canvas.gd" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://dw62imbfu0pjd" path="res://scrollsize.gd" id="3_h2yge"]
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1889545624]
-limit_enabled = false
+[node name="Main" type="Node" unique_id=1428096425]
+script = ExtResource("1_0xm2m")
+
+[node name="Canvas" type="ColorRect" parent="." unique_id=771364464]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+color = Color(1, 1, 1, 0.15686275)
+script = ExtResource("2_h2yge")
+
+[node name="Art" type="Node2D" parent="." unique_id=1067627967]
+script = ExtResource("3_h2yge")
