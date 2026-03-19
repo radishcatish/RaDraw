@@ -3,19 +3,136 @@
 [ext_resource type="Script" uid="uid://dikca8pffwpjq" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://dy14uxo20uork" path="res://canvas.gd" id="2_h2yge"]
 [ext_resource type="Script" uid="uid://dw62imbfu0pjd" path="res://scrollsize.gd" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://c13e8nm3dv1ec" path="res://sizeslider.gd" id="4_7mycd"]
+[ext_resource type="Script" uid="uid://cmignx865udy0" path="res://currenttoolicon.gd" id="5_7mycd"]
+[ext_resource type="Texture2D" uid="uid://b8mokd2jbpxol" path="res://svg/draw.svg" id="5_lquwl"]
 
 [node name="Main" type="Node" unique_id=1428096425]
 script = ExtResource("1_0xm2m")
 
-[node name="Canvas" type="ColorRect" parent="." unique_id=771364464]
+[node name="Art" type="Node2D" parent="." unique_id=1067627967]
+script = ExtResource("3_h2yge")
+
+[node name="UI" type="Control" parent="." unique_id=715203044]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Canvas" type="ColorRect" parent="UI" unique_id=771364464]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset_ratio = Vector2(0.5, 0.5)
-color = Color(1, 1, 1, 0.15686275)
+color = Color(1, 1, 1, 0)
 script = ExtResource("2_h2yge")
 
-[node name="Art" type="Node2D" parent="." unique_id=1067627967]
-script = ExtResource("3_h2yge")
+[node name="MenuBar" type="MenuBar" parent="UI" unique_id=2001973010]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="File" type="PopupMenu" parent="UI/MenuBar" unique_id=619921384]
+oversampling_override = 1.0
+title = "File"
+size = Vector2i(111, 100)
+item_count = 3
+item_0/text = "Save as..."
+item_0/id = 2
+item_1/text = "Import"
+item_1/id = 0
+item_2/text = "Export"
+item_2/id = 1
+
+[node name="Actions" type="PopupMenu" parent="UI/MenuBar" unique_id=210629602]
+oversampling_override = 1.0
+title = "Actions"
+size = Vector2i(189, 100)
+item_count = 2
+item_0/text = "Add polygon to line"
+item_0/id = 0
+item_1/text = "Add line to polygon"
+item_1/id = 1
+
+[node name="Right" type="HSplitContainer" parent="UI" unique_id=812398428]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -41.0
+offset_bottom = 146.0
+grow_horizontal = 0
+split_offsets = PackedInt32Array(16)
+dragging_enabled = false
+split_offset = 16
+
+[node name="LineThicknessSlider" type="VSlider" parent="UI/Right" unique_id=62179440]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+min_value = 1.0
+value = 10.0
+script = ExtResource("4_7mycd")
+
+[node name="Label" type="Label" parent="UI/Right/LineThicknessSlider" unique_id=1725676472]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -11.5
+offset_right = 14.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "100"
+horizontal_alignment = 1
+
+[node name="Container" type="VBoxContainer" parent="UI/Right" unique_id=926884004]
+layout_mode = 2
+
+[node name="Icon" type="Button" parent="UI/Right/Container" unique_id=821245351]
+layout_mode = 2
+mouse_filter = 2
+button_mask = 0
+icon = ExtResource("5_lquwl")
+script = ExtResource("5_7mycd")
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="UI/Right/Container" unique_id=314415134]
+layout_mode = 2
+text = "iiiiii"
+color = Color(1, 1, 1, 1)
+
+[node name="Erase" type="Button" parent="UI/Right/Container" unique_id=1977649527]
+layout_mode = 2
+text = "Erase"
+
+[node name="Line" type="Button" parent="UI/Right/Container" unique_id=299512155]
+layout_mode = 2
+text = "Draw"
+
+[node name="Poly" type="Button" parent="UI/Right/Container" unique_id=1951731002]
+layout_mode = 2
+text = "Poly"
+
+[node name="Button3" type="Button" parent="UI/Right/Container" unique_id=1724463878]
+visible = false
+layout_mode = 2
+text = "Line"
+
+[node name="Button4" type="Button" parent="UI/Right/Container" unique_id=704102681]
+visible = false
+layout_mode = 2
+text = "Shape"
+
+[connection signal="pressed" from="UI/Right/Container/Erase" to="." method="_on_erase_pressed"]
+[connection signal="pressed" from="UI/Right/Container/Line" to="." method="drawbuttonpressed"]
+[connection signal="pressed" from="UI/Right/Container/Poly" to="." method="polybuttonpressed"]
