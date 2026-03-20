@@ -1,0 +1,8 @@
+selection inspector - click a stroke in move mode, change its color + thickness in a side panel
+aseprite palette
+grouping/symbols - like adobe animate but simpler
+layers
+save/import as custom .radraw fileformat
+export as PNG or BMP
+export as SVG
+sprite sheet export OR gdextension to make .radraw files work like they do with aseprite wizard
