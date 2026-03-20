@@ -1,7 +1,7 @@
 extends Control
 @onready var main: Node = get_tree().current_scene
 var current_stroke: Node = null
-var stroke_list: Array = []
+var current_layer: Node2D = null  # set by layers panel
 var stroke_position: Vector2 = Vector2.ZERO
 var selected_stroke: Node = null
 var selected_strokes: Array = []
@@ -44,12 +44,14 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 				if not selected_stroke:
 					main.art.scale = clamp(main.art.scale + ZOOM_STEP, ZOOM_MIN, ZOOM_MAX)
 				else:
-					selected_stroke.z_index += 1
+					var idx := selected_stroke.get_index()
+					main.art.move_child(selected_stroke, idx + 1) 
 		MOUSE_BUTTON_WHEEL_DOWN:
 			if not selected_stroke:
 				main.art.scale = clamp(main.art.scale - ZOOM_STEP, ZOOM_MIN, ZOOM_MAX)
 			else:
-				selected_stroke.z_index -= 1
+				var idx := selected_stroke.get_index()
+				main.art.move_child(selected_stroke, idx - 1) 
 		MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				_begin_stroke(event.position)
@@ -101,16 +103,14 @@ func _begin_stroke(pos: Vector2) -> void:
 			line.width          = main.line_thickness
 			line.add_point(canvas_pos)
 			line.add_point(canvas_pos + Vector2(0, 0.0001))  # prevent zero-length line
-			main.art.add_child(line)
-			stroke_list.append(line)
+			current_layer.add_child(line)
 			current_stroke = line
 
 		MODE_POLYGON:
 			var poly := Polygon2D.new()
 			poly.polygon = PackedVector2Array([canvas_pos])
 			poly.color   = main.colorbutton.color
-			main.art.add_child(poly)
-			stroke_list.append(poly)
+			current_layer.add_child(poly)
 			current_stroke = poly
 		MODE_LINE:
 			var line := Line2D.new()
@@ -121,15 +121,13 @@ func _begin_stroke(pos: Vector2) -> void:
 			line.width          = main.line_thickness
 			line.add_point(canvas_pos)
 			line.add_point(canvas_pos + Vector2(0, 0.0001))  # prevent zero-length line
-			main.art.add_child(line)
-			stroke_list.append(line)
+			current_layer.add_child(line)
 			current_stroke = line
 		MODE_RECT:
 			var poly := Polygon2D.new()
 			poly.color = main.colorbutton.color
 			poly.polygon = PackedVector2Array([canvas_pos, canvas_pos, canvas_pos, canvas_pos])
-			main.art.add_child(poly)
-			stroke_list.append(poly)
+			current_layer.add_child(poly)
 			current_stroke = poly
 
 		MODE_MOVE:
@@ -163,8 +161,7 @@ func _begin_stroke(pos: Vector2) -> void:
 				var poly := Polygon2D.new()
 				poly.color = main.colorbutton.color
 				poly.polygon = clicked_stroke.points
-				main.art.add_child(poly)
-				stroke_list.append(poly)
+				current_layer.add_child(poly)
 				poly.position = clicked_stroke.position
 				current_stroke = poly
 				main.mode = MODE_MOVE
@@ -181,8 +178,7 @@ func _begin_stroke(pos: Vector2) -> void:
 				line.width          = main.line_thickness
 				line.points = clicked_stroke.polygon
 				line.closed = true
-				main.art.add_child(line)
-				stroke_list.append(line)
+				current_layer.add_child(line)
 				line.position = clicked_stroke.position
 				current_stroke = line
 				main.mode = MODE_MOVE
@@ -193,10 +189,9 @@ func _continue_stroke(event: InputEventMouseMotion) -> void:
 	match main.mode:
 		MODE_ERASER:
 			var canvas_pos := to_canvas(event.position)
-			for stroke in stroke_list:
+			for stroke in _all_strokes():
 				if stroke_contains_point(stroke, canvas_pos, ERASER_RADIUS):
 					stroke.queue_free()
-					stroke_list.erase(stroke)
 					break
 
 		MODE_DRAW:
@@ -249,10 +244,12 @@ func _set_selected(stroke: Node, on: bool) -> void:
 
 
 func _undo() -> void:
-	if stroke_list.is_empty():
+	if not current_layer:
 		return
-	stroke_list.back().queue_free()
-	stroke_list.pop_back()
+	var children := current_layer.get_children()
+	if children.is_empty():
+		return
+	children.back().queue_free()
 
 
 ## Convert a screen position to canvas-local space.
@@ -274,10 +271,19 @@ func get_stroke_center(stroke: Node) -> Vector2:
 		avg += p
 	return (avg / pts.size()) + stroke.position
 
+## Returns all strokes across all visible layers.
+func _all_strokes() -> Array:
+	var result: Array = []
+	for layer in main.art.get_children():
+		if layer.visible:
+			result.append_array(layer.get_children())
+	return result
+
+
 func _find_closest_stroke(canvas_pos: Vector2) -> Node:
 	var best_dist := SELECT_RADIUS
 	var result: Node = null
-	for stroke in stroke_list:
+	for stroke in _all_strokes():
 		var dist := stroke_min_distance(stroke, canvas_pos)
 		if dist < best_dist:
 			best_dist = dist
@@ -336,10 +342,8 @@ func _group_selection() -> void:
 		return
 	var clump_data := Clump.from_nodes(selected_strokes, "Clump")
 	var clump_node := ClumpNode.from_clump(clump_data)
-	main.art.add_child(clump_node)
-	stroke_list.append(clump_node)
+	current_layer.add_child(clump_node)
 	for stroke in selected_strokes:
 		stroke.queue_free()
-		stroke_list.erase(stroke)
 	selected_strokes.clear()
 	selected_stroke = clump_node

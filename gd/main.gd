@@ -1,4 +1,7 @@
 extends Node
+@onready var center: Node2D = $Center
+@onready var tiles: Sprite2D = $Center/Tiles
+
 @onready var toolicon: TextureRect = $UI/RightBar/Container/Icon
 @onready var line_thickness_slider: VSlider = $UI/RightBar/LineThicknessSlider
 @onready var thickness_label: Label = $UI/RightBar/LineThicknessSlider/ThicknessLabel
@@ -19,6 +22,8 @@ func _ready():
 	art.position = art.get_viewport_rect().size / 2
 
 func _process(_d):
+	center.position = art.position
+	tiles.scale = art.scale * 10
 	match mode:
 		-3:toolicon.texture = LINETOPOLY
 		-2:toolicon.texture = POLYTOLINE
@@ -37,7 +42,7 @@ func _process(_d):
 	else:
 		line_thickness_slider.editable = false
 		line_thickness_slider.modulate = Color(1,1,1,.5)
-	get_tree().root.content_scale_factor = DisplayServer.window_get_size().x / 1920.0 * 1.5
+	
 	line_thickness = line_thickness_slider.value
 
 func drawbuttonpressed():mode = 0

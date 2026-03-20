@@ -14,6 +14,12 @@ config/name="RaDraw"
 run/main_scene="uid://cekymtfjn0y1j"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/delta_smoothing=false
+config/icon="uid://dt62tirpxj2kn"
+
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [physics]
 
