@@ -1,25 +1,21 @@
 [gd_scene format=3 uid="uid://cekymtfjn0y1j"]
 
-[ext_resource type="Script" uid="uid://dikca8pffwpjq" path="res://gd/main.gd" id="1_8kplt"]
-[ext_resource type="Script" uid="uid://dw62imbfu0pjd" path="res://gd/centeronready.gd" id="2_ao1ln"]
-[ext_resource type="Script" uid="uid://dy14uxo20uork" path="res://gd/canvas.gd" id="3_q8ief"]
-[ext_resource type="Script" uid="uid://c13e8nm3dv1ec" path="res://gd/sizeslider.gd" id="4_ap273"]
-[ext_resource type="Texture2D" uid="uid://vchjvog0r86d" path="res://svg/move.svg" id="5_d2uin"]
-[ext_resource type="Texture2D" uid="uid://6xndu8ma7osy" path="res://svg/small_erase.svg" id="6_8d387"]
-[ext_resource type="Script" uid="uid://cmignx865udy0" path="res://gd/currenttoolicon.gd" id="6_mn4ff"]
-[ext_resource type="Texture2D" uid="uid://bt3p87s2nlaev" path="res://svg/small_draw.svg" id="7_mn4ff"]
-[ext_resource type="Texture2D" uid="uid://chu4yorlr7h7q" path="res://svg/small_poly.svg" id="8_d2uin"]
-[ext_resource type="Texture2D" uid="uid://beolncdpu28fo" path="res://svg/small_line.svg" id="9_bnc66"]
-[ext_resource type="Texture2D" uid="uid://bbaxw2rfnfpep" path="res://svg/small_rect.svg" id="10_uf0e4"]
-[ext_resource type="Texture2D" uid="uid://dxoyni5a2nfka" path="res://svg/small_move.svg" id="12_bnc66"]
-[ext_resource type="Texture2D" uid="uid://x4f3iginr7dv" path="res://svg/small_edit.svg" id="13_hegun"]
+[ext_resource type="Script" uid="uid://dikca8pffwpjq" path="res://gd/main.gd" id="1_4c57u"]
+[ext_resource type="Script" uid="uid://dy14uxo20uork" path="res://gd/canvas.gd" id="2_efxa6"]
+[ext_resource type="Texture2D" uid="uid://vchjvog0r86d" path="res://svg/move.svg" id="3_dg77c"]
+[ext_resource type="Texture2D" uid="uid://6xndu8ma7osy" path="res://svg/small_erase.svg" id="4_ycdy4"]
+[ext_resource type="Texture2D" uid="uid://bt3p87s2nlaev" path="res://svg/small_draw.svg" id="5_w48qg"]
+[ext_resource type="Texture2D" uid="uid://chu4yorlr7h7q" path="res://svg/small_poly.svg" id="6_vivmo"]
+[ext_resource type="Texture2D" uid="uid://beolncdpu28fo" path="res://svg/small_line.svg" id="7_2cqfq"]
+[ext_resource type="Texture2D" uid="uid://bbaxw2rfnfpep" path="res://svg/small_rect.svg" id="8_yaehf"]
+[ext_resource type="Texture2D" uid="uid://dxoyni5a2nfka" path="res://svg/small_move.svg" id="9_074og"]
+[ext_resource type="Texture2D" uid="uid://x4f3iginr7dv" path="res://svg/small_edit.svg" id="10_cegan"]
 
-[node name="Main" type="Node" unique_id=1428096425]
-script = ExtResource("1_8kplt")
+[node name="Main" type="Node" unique_id=321436125]
+script = ExtResource("1_4c57u")
 
 [node name="Art" type="Node2D" parent="." unique_id=1067627967]
 texture_filter = 1
-script = ExtResource("2_ao1ln")
 
 [node name="UI" type="Control" parent="." unique_id=715203044]
 layout_mode = 3
@@ -40,7 +36,7 @@ grow_vertical = 2
 pivot_offset_ratio = Vector2(0.5, 0.5)
 localize_numeral_system = false
 color = Color(1, 1, 1, 0)
-script = ExtResource("3_q8ief")
+script = ExtResource("2_efxa6")
 
 [node name="RightBarBottom" type="HSplitContainer" parent="UI" unique_id=1379526104]
 layout_mode = 1
@@ -82,9 +78,8 @@ value = 10.0
 tick_count = 10
 ticks_on_borders = true
 ticks_position = 3
-script = ExtResource("4_ap273")
 
-[node name="Label" type="Label" parent="UI/RightBar/LineThicknessSlider" unique_id=1725676472]
+[node name="ThicknessLabel" type="Label" parent="UI/RightBar/LineThicknessSlider" unique_id=1725676472]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -106,9 +101,8 @@ layout_mode = 2
 [node name="Icon" type="TextureRect" parent="UI/RightBar/Container" unique_id=1865863724]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("5_d2uin")
+texture = ExtResource("3_dg77c")
 expand_mode = 4
-script = ExtResource("6_mn4ff")
 
 [node name="ColorPickerButton" type="ColorPickerButton" parent="UI/RightBar/Container" unique_id=314415134]
 layout_mode = 2
@@ -119,44 +113,44 @@ color = Color(1, 1, 1, 1)
 [node name="Erase" type="Button" parent="UI/RightBar/Container" unique_id=1977649527]
 layout_mode = 2
 text = "Erase"
-icon = ExtResource("6_8d387")
+icon = ExtResource("4_ycdy4")
 icon_alignment = 2
 
 [node name="Draw" type="Button" parent="UI/RightBar/Container" unique_id=299512155]
 layout_mode = 2
 text = "Draw"
-icon = ExtResource("7_mn4ff")
+icon = ExtResource("5_w48qg")
 icon_alignment = 2
 
 [node name="Poly" type="Button" parent="UI/RightBar/Container" unique_id=1951731002]
 layout_mode = 2
 text = "Poly"
-icon = ExtResource("8_d2uin")
+icon = ExtResource("6_vivmo")
 icon_alignment = 2
 
 [node name="Line" type="Button" parent="UI/RightBar/Container" unique_id=1724463878]
 layout_mode = 2
 text = "Line"
-icon = ExtResource("9_bnc66")
+icon = ExtResource("7_2cqfq")
 icon_alignment = 2
 
 [node name="Rect" type="Button" parent="UI/RightBar/Container" unique_id=704102681]
 layout_mode = 2
 text = "Rect"
-icon = ExtResource("10_uf0e4")
+icon = ExtResource("8_yaehf")
 icon_alignment = 2
 
 [node name="Move" type="Button" parent="UI/RightBar/Container" unique_id=878861582]
 layout_mode = 2
 text = "Move"
-icon = ExtResource("12_bnc66")
+icon = ExtResource("9_074og")
 icon_alignment = 2
 
 [node name="Edit" type="Button" parent="UI/RightBar/Container" unique_id=1769256094]
 layout_mode = 2
 text = "Edit
 "
-icon = ExtResource("13_hegun")
+icon = ExtResource("10_cegan")
 icon_alignment = 2
 
 [node name="LeftBarBottom" type="HSplitContainer" parent="UI" unique_id=1088497278]
@@ -204,24 +198,29 @@ flat = true
 oversampling_override = 1.0
 title = "File"
 size = Vector2i(186, 100)
-item_count = 3
-item_0/text = "Save as..."
-item_0/id = 2
-item_1/text = "Import .radraw file"
-item_1/id = 0
-item_2/text = "Export as..."
-item_2/id = 1
+item_count = 5
+item_0/text = "Save scene as .radraw"
+item_0/id = 0
+item_1/text = "Save selected stroke(s) as clump"
+item_1/id = 1
+item_2/text = "Load .radraw file"
+item_2/id = 2
+item_3/text = "Import clump into scene"
+item_3/id = 3
+item_4/text = "Export as..."
+item_4/id = 4
 
 [node name="Actions" type="PopupMenu" parent="UI/MenuBar" unique_id=210629602]
 oversampling_override = 1.0
 title = "Actions"
 size = Vector2i(189, 100)
-hide_on_item_selection = false
-item_count = 2
-item_0/text = "Add polygon to line"
+item_count = 3
+item_0/text = "Add polygon to line (Line must not make poly self intersect)"
 item_0/id = 0
 item_1/text = "Add line to polygon"
 item_1/id = 1
+item_2/text = "Open instructions"
+item_2/id = 2
 
 [node name="Bottom" type="VSplitContainer" parent="UI" unique_id=119861153]
 visible = false

@@ -4,6 +4,7 @@ var current_stroke: Node = null
 var stroke_list: Array = []
 var stroke_position: Vector2 = Vector2.ZERO
 var selected_stroke: Node = null
+var selected_strokes: Array = []
 var prev_mouse_pos: Vector2 = Vector2.ZERO
 var move_rotating := false
 var edit_stroke: Node = null
@@ -25,6 +26,8 @@ const ZOOM_STEP    = Vector2(0.1, 0.1)
 const ZOOM_MIN     = Vector2(0.1, 0.1)
 const ZOOM_MAX     = Vector2(10.0, 10.0)
 const ERASER_RADIUS = 10.0
+const SELECT_RADIUS = 20.0
+const SELECTED_TINT = Color(0.5, 0.8, 1.0)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -53,6 +56,10 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 			else:
 				current_stroke = null
 				if main.mode != MODE_MOVE:
+					_set_selected(selected_stroke, false)
+					for s in selected_strokes:
+						_set_selected(s, false)
+					selected_strokes.clear()
 					selected_stroke = null
 				if main.mode != MODE_EDIT:
 					edit_point_index = -1
@@ -126,13 +133,22 @@ func _begin_stroke(pos: Vector2) -> void:
 			current_stroke = poly
 
 		MODE_MOVE:
-			selected_stroke = null
-			var best_dist := INF
-			for stroke in stroke_list:
-				var dist := stroke_min_distance(stroke, canvas_pos)
-				if dist < best_dist:
-					best_dist = dist
-					selected_stroke = stroke
+			var clicked := _find_closest_stroke(canvas_pos)
+			if Input.is_key_pressed(KEY_SHIFT):
+				if clicked and clicked in selected_strokes:
+					selected_strokes.erase(clicked)
+					_set_selected(clicked, false)
+				elif clicked:
+					selected_strokes.append(clicked)
+					_set_selected(clicked, true)
+				selected_stroke = null
+			else:
+				_set_selected(selected_stroke, false)
+				for s in selected_strokes:
+					_set_selected(s, false)
+				selected_strokes.clear()
+				selected_stroke = clicked
+				_set_selected(selected_stroke, true)
 
 		MODE_EDIT:
 			var clicked_stroke := _find_closest_stroke(canvas_pos)
@@ -141,7 +157,37 @@ func _begin_stroke(pos: Vector2) -> void:
 				edit_point_index = -1
 			if edit_stroke:
 				edit_point_index = _find_closest_point(edit_stroke, canvas_pos, EDIT_RADIUS)
-
+		MODE_POLYTOLINE:
+			var clicked_stroke := _find_closest_stroke(canvas_pos)
+			if clicked_stroke is Line2D:
+				var poly := Polygon2D.new()
+				poly.color = main.colorbutton.color
+				poly.polygon = clicked_stroke.points
+				main.art.add_child(poly)
+				stroke_list.append(poly)
+				poly.position = clicked_stroke.position
+				current_stroke = poly
+				main.mode = MODE_MOVE
+				selected_strokes = [poly, clicked_stroke]
+				_group_selection()
+		MODE_LINETOPOLY:
+			var clicked_stroke := _find_closest_stroke(canvas_pos)
+			if clicked_stroke is Polygon2D:
+				var line := Line2D.new()
+				line.end_cap_mode   = Line2D.LINE_CAP_ROUND
+				line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+				line.joint_mode     = Line2D.LINE_JOINT_ROUND
+				line.default_color  = main.colorbutton.color
+				line.width          = main.line_thickness
+				line.points = clicked_stroke.polygon
+				line.closed = true
+				main.art.add_child(line)
+				stroke_list.append(line)
+				line.position = clicked_stroke.position
+				current_stroke = line
+				main.mode = MODE_MOVE
+				selected_strokes = [line, clicked_stroke]
+				_group_selection()
 
 func _continue_stroke(event: InputEventMouseMotion) -> void:
 	match main.mode:
@@ -190,8 +236,16 @@ func _continue_stroke(event: InputEventMouseMotion) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.ctrl_pressed:
-		if event.keycode == KEY_Z:
-			_undo()
+		match event.keycode:
+			KEY_Z:
+				_undo()
+			KEY_G:
+				_group_selection()
+
+
+func _set_selected(stroke: Node, on: bool) -> void:
+	if stroke:
+		stroke.modulate = SELECTED_TINT if on else Color.WHITE
 
 
 func _undo() -> void:
@@ -221,7 +275,7 @@ func get_stroke_center(stroke: Node) -> Vector2:
 	return (avg / pts.size()) + stroke.position
 
 func _find_closest_stroke(canvas_pos: Vector2) -> Node:
-	var best_dist := INF
+	var best_dist := SELECT_RADIUS
 	var result: Node = null
 	for stroke in stroke_list:
 		var dist := stroke_min_distance(stroke, canvas_pos)
@@ -252,6 +306,11 @@ func _find_closest_point(stroke: Node, canvas_pos: Vector2, tolerance: float) ->
 
 
 func stroke_min_distance(stroke: Node, point: Vector2) -> float:
+	if stroke is ClumpNode:
+		var best := INF
+		for child in stroke.get_strokes():
+			best = min(best, stroke_min_distance(child, point - stroke.position))
+		return best
 	var best := INF
 	if stroke is Line2D:
 		for i in stroke.get_point_count():
@@ -271,3 +330,16 @@ func stroke_contains_point(stroke: Node, point: Vector2, tolerance: float) -> bo
 			if p.distance_to(point) < tolerance:
 				return true
 	return false
+	
+func _group_selection() -> void:
+	if selected_strokes.size() < 2:
+		return
+	var clump_data := Clump.from_nodes(selected_strokes, "Clump")
+	var clump_node := ClumpNode.from_clump(clump_data)
+	main.art.add_child(clump_node)
+	stroke_list.append(clump_node)
+	for stroke in selected_strokes:
+		stroke.queue_free()
+		stroke_list.erase(stroke)
+	selected_strokes.clear()
+	selected_stroke = clump_node
