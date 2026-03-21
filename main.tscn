@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://dy14uxo20uork" path="res://gd/canvas.gd" id="2_efxa6"]
 [ext_resource type="Texture2D" uid="uid://vchjvog0r86d" path="res://svg/move.svg" id="3_dg77c"]
 [ext_resource type="Script" uid="uid://cue18qlk8arjc" path="res://gd/layers.gd" id="3_efxa6"]
-[ext_resource type="Texture2D" uid="uid://dah1ud6mq5vsn" path="res://svg/layer_add.svg" id="3_ycdy4"]
 [ext_resource type="Texture2D" uid="uid://6xndu8ma7osy" path="res://svg/small_erase.svg" id="4_ycdy4"]
 [ext_resource type="Texture2D" uid="uid://bt3p87s2nlaev" path="res://svg/small_draw.svg" id="5_w48qg"]
 [ext_resource type="Texture2D" uid="uid://chu4yorlr7h7q" path="res://svg/small_poly.svg" id="6_vivmo"]
@@ -24,6 +23,9 @@ gradient = SubResource("Gradient_4c57u")
 width = 2
 height = 2
 fill_to = Vector2(1, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_efxa6"]
+load_path = "res://.godot/imported/layer_add.svg-371d87a2dd2998851284aba74ae97a48.ctex"
 
 [node name="Main" type="Node" unique_id=321436125]
 script = ExtResource("1_4c57u")
@@ -80,6 +82,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -200.0
+grow_horizontal = 2
+grow_vertical = 0
 mouse_filter = 1
 color = Color(0.25565878, 0.25565878, 0.25565878, 1)
 
@@ -90,13 +94,12 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 208.0
 offset_top = -192.0
-offset_right = 275.0
-offset_bottom = -167.0
+offset_right = 232.0
+offset_bottom = -168.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 12
-text = "Add Layer
-"
-icon = ExtResource("3_ycdy4")
+text = "Add Layer"
+icon = SubResource("CompressedTexture2D_efxa6")
 
 [node name="LayerContainer" type="PanelContainer" parent="UI" unique_id=1066192780]
 layout_mode = 1
